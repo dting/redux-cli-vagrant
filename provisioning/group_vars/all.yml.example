@@ -1,0 +1,4 @@
+---
+git_username: 'user'
+git_email: 'user@example.com'
+node_version: '5.10.1'

@@ -1,0 +1,38 @@
+---
+- name: Create global .gitconfig with default user.name and user.email.
+  template: src=gconfig.j2 dest=/home/vagrant/.gitconfig force=no
+  tags: git
+
+- name: Register remote PATH File
+  shell: "echo $PATH"
+  register: nodejs_path_out
+
+- name: Set node version
+  command: /home/vagrant/n/bin/n {{ node_version }}
+  environment:
+    N_PREFIX: "/home/vagrant/n"
+    PATH: "/home/vagrant/n/bin:{{ nodejs_path_out.stdout }}"
+
+- name: Npm | Install npm
+  npm: name=npm global=yes executable=/home/vagrant/n/bin/npm state=latest
+  environment:
+    N_PREFIX: "/home/vagrant/n"
+    PATH: "/home/vagrant/n/bin:{{ nodejs_path_out.stdout }}"
+
+- name: Npm | Install npm packages
+  npm: name={{item}} global=yes executable=/home/vagrant/n/bin/npm
+  with_items:
+    - redux-cli
+    - npm-check-updates
+  environment:
+    N_PREFIX: "/home/vagrant/n"
+    PATH: "/home/vagrant/n/bin:{{ nodejs_path_out.stdout }}"
+  tags: npm packages
+
+- name: Create app directory for app
+  file: path=/vagrant/app state=directory
+  tags: app
+
+- name: Start in /vagrant/app directory when ssh
+  lineinfile: dest=/home/vagrant/.bashrc regexp='^cd /vagrant/app$' line="cd /vagrant/app" state=present
+  tags: .bashrc

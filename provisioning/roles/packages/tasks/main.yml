@@ -1,0 +1,16 @@
+---
+- name: Install packages
+  apt: pkg={{ item }}
+  become: yes
+  with_items:
+    - build-essential
+    - curl
+    - git
+    - ruby
+    - ruby-sass
+    - g++
+    - libkrb5-dev
+    - libpng-dev
+    - libfontconfig-dev
+    - python-pip
+  tags: packages

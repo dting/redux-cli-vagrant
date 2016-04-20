@@ -1,0 +1,15 @@
+---
+- name: Install heroku's release key for package verification
+  become: yes
+  shell: wget -O- https://toolbelt.heroku.com/apt/release.key | apt-key add -
+  tags: heroku-toolbelt
+
+- name: Add heroku repository to apt
+  become: yes
+  apt_repository: repo='deb http://toolbelt.heroku.com/ubuntu ./' update_cache=yes
+  tags: heroku-toolbelt
+
+- name: Install heroku-toolbelt
+  become: yes
+  apt: pkg=heroku-toolbelt state=installed
+  tags: heroku-toolbelt
